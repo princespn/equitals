@@ -1,0 +1,40 @@
+TRUNCATE TABLE `tbl_activity_notification`;
+TRUNCATE TABLE `tbl_all_transaction`;
+TRUNCATE TABLE `tbl_awards_list`;
+TRUNCATE TABLE `tbl_dashboard`;
+TRUNCATE TABLE `tbl_directincome`;
+TRUNCATE TABLE `tbl_gallery`;
+TRUNCATE TABLE `tbl_gallerya`;
+TRUNCATE TABLE `tbl_ip_tack`;
+TRUNCATE TABLE `tbl_kyc`;
+TRUNCATE TABLE `tbl_level_income`;
+TRUNCATE TABLE `tbl_level_view`;
+TRUNCATE TABLE `tbl_news`;
+TRUNCATE TABLE `tbl_payout_history`;
+TRUNCATE TABLE `tbl_pins`;
+TRUNCATE TABLE `tbl_pin_request`;
+TRUNCATE TABLE `tbl_popup`;
+TRUNCATE TABLE `tbl_qualified_user_list`;
+TRUNCATE TABLE `tbl_support`;
+TRUNCATE TABLE `tbl_support_comments`;
+TRUNCATE TABLE `tbl_today_details`;
+TRUNCATE TABLE `tbl_topup`;
+DELETE FROM `tbl_users` WHERE id!=1;
+ALTER TABLE `tbl_users` auto_increment = 2;
+TRUNCATE TABLE `tbl_users_change_data`;
+TRUNCATE TABLE `tbl_user_reset_password`;
+TRUNCATE TABLE `tbl_video`;
+TRUNCATE TABLE `tbl_whatnew`;
+TRUNCATE TABLE `tbl_withdrawal_amt`;
+TRUNCATE TABLE `tbl_withdrwal_history`;
+TRUNCATE TABLE `tbl_award_winner`;
+TRUNCATE TABLE `tbl_meeting`;
+TRUNCATE TABLE `tbl_dashboard`;
+TRUNCATE TABLE `tbl_kyc`;
+TRUNCATE TABLE `tbl_level_view`;
+TRUNCATE TABLE `tbl_pins`;
+TRUNCATE TABLE `tbl_today_details`;
+TRUNCATE TABLE `tbl_topup`;
+
+
+

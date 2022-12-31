@@ -1,0 +1,318 @@
+<template>
+<!-- start content -->
+<div class="content">
+    <div class="">
+        <div class="page-header-title">
+            <h4 class="page-title">Balance Transfer Report</h4>
+        </div>
+    </div>
+    <div class="page-content-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class="">
+                                <form id="searchForm">
+                                    <div class="row">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <div>
+                                                    <div class="input-group">
+                                                        <DatePicker :bootstrap-styling="true" name="frm_date" :format="dateFormat" placeholder="From Date" id="frm_date"></DatePicker>
+                                                        <!-- <input type="text" class="form-control datepicker" placeholder="From Date" id="frm_date"> -->
+                                                        <span class="input-group-addon bg-custom b-0 datepicker_border">
+                                                            <i class="mdi mdi-calendar"></i>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <div>
+                                                    <div class="input-group">
+                                                        <DatePicker :bootstrap-styling="true" name="to_date" :format="dateFormat" placeholder="To Date" id="to_date"></DatePicker>
+                                                        <!-- <input type="text" class="form-control datepicker" placeholder="To Date" id="to_date"> -->
+                                                        <span class="input-group-addon bg-custom b-0 datepicker_border">
+                                                            <i class="mdi mdi-calendar"></i>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>To User Id</label>
+                                                <input class="form-control" placeholder="Enter To User Id" type="text" id="to_user_id">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>From User Id</label>
+                                                <input class="form-control" placeholder="Enter From User Id" type="text" id="from_user_id">
+                                            </div>
+                                        </div>
+                                        <!-- <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label class="control-label">Product</label>
+                                                 <select class="form-control" id="product_id">
+                                                    <option selected value="">Select</option>
+                                                    <option :value="product.id" v-for="product in arrProducts">{{product.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>E-Pin</label>
+                                                <input class="form-control" placeholder="Enter E-Pin" type="text" id="pin">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>Type</label>
+                                                <select class="form-control" id="status">
+                                                    <option selected value="">Select type</option>
+                                                    <option value="registration">Purchase</option>
+                                                    <option value="repurchase">Repurchase</option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-primary waves-effect waves-light" id="onSearchClick">Search</button>
+                                            <button type="button" class="btn btn-info waves-effect waves-light" @click="exportToExcel">Export To Excel</button>
+                                            <button type="button" class="btn btn-dark waves-effect waves-light mt-4" id="onResetClick">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <table id="wallet-transaction-report" class="table table-striped table-bordered dt-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>To User</th>
+                                        <th>From User</th>
+                                        <th>Amount</th>
+                                        <th>Wallet Type</th>
+                                          <th>Transaction Type</th>
+                                        <th>Remark</th>  
+                                        <th>Date</th>  
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>To User</th>
+                                        <th>From User</th>
+                                        <th>Amount</th>
+                                        <th>Wallet Type</th>
+                                        <th>Transaction Type</th>
+                                        <th>Remark</th>                                         
+                                        <th>Date</th>                                       
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content -->
+</template>
+
+<script>
+    import { apiAdminHost } from'./../../admin-config/config';
+    import moment from 'moment';
+    import DatePicker from 'vuejs-datepicker';
+
+    export default {
+        data() {
+            return {
+                provide_help_data  : [],
+                length : 10,
+                start  : 0,
+                arrProducts:[],
+                INR:'',
+                export_url:''
+            }
+        },
+        mounted() {
+            this.productReport();
+        },
+        components: {
+            DatePicker
+        },
+        methods: {
+            dateFormat(date) {
+                return moment(date).format('DD-MM-YYYY');
+            },
+            productReport(){
+                let i = 0;
+                let that = this;
+                let token = localStorage.getItem('access_token');
+                setTimeout(function(){
+                    const table = $('#wallet-transaction-report').DataTable({
+                        responsive: true,
+                        retrieve: true,
+                        destroy: true,
+                        processing: false,
+                        serverSide: true,
+                        stateSave: false,
+                        ordering: false,
+                        dom: 'Brtip',
+                        lengthMenu: [[10, 50, 100], [10, 50, 100]],
+                        buttons: [
+                            // 'copyHtml5',
+                            /*'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5',*/
+                            'pageLength',
+                        ],
+                        ajax: {
+                            url: apiAdminHost+'/wallet_transaction_report',
+                            type: 'POST',
+                            data: function (d) {
+                                i = 0;
+                                i = d.start + 1;
+
+                                let params = {
+                                    /*product_id: $('#product_id').val(),*/
+                                    to_user_id: $('#to_user_id').val(),
+                                    from_user_id: $('#from_user_id').val(),
+                                    /*status: $('#status').val(),
+                                    pin: $('#pin').val(),*/
+                                    frm_date: $('#frm_date').val(),
+                                    to_date: $('#to_date').val()
+                                };
+                                Object.assign(d, params);
+                                return d;
+                            },
+                            headers: {
+                              'Authorization': 'Bearer ' + token
+                            },
+                            dataSrc: function (json) {
+                                if (json.code === 200) {
+                                    that.arrGetHelp = json.data.records;
+                                    json['draw'] = json.data.draw;
+                                    json['recordsFiltered'] = json.data.recordsFiltered;
+                                    json['recordsTotal'] = json.data.recordsTotal;
+                                    return json.data.records;
+                                } else {
+                                    json['draw'] = 0;
+                                    json['recordsFiltered'] = 0;
+                                    json['recordsTotal'] = 0;
+                                    return json;
+                                }
+                            }
+                        },
+                        columns: [
+                            {
+                                render: function (data, type, row, meta) {
+                                    //return meta.row + 1;
+                                    return i++;
+                                }
+                            },
+                            {
+                                render: function (data, type, row, meta) {
+                                    return `<span>${row.user_id}</span><br><span>(${row.fullname})</span>`;
+                                }
+                            },
+                            {
+                                render: function (data, type, row, meta) {
+                                    return `<span>${row.from_user_id}</span><br><span>(${row.from_fullname})</span>`;
+                                }
+                            },
+                              { render: function (data, type, row, meta,) {
+                                   return `<span>$${row.amount}</span>`;
+                                
+                                } 
+                            },
+                            { data: 'wallet_type' },
+                            { render: function (data, type, row, meta,) {
+                                if(row.transaction_type == 1)
+                                {
+                                   return `<span>Add Fund</span>`;
+                                }
+                                else if(row.transaction_type == 2)
+                                {
+                                   return `<span>Remove Fund</span>`;
+                                }
+                                else
+                                {
+                                    return `<span>-</span>`;
+                                }
+                                
+                                } 
+                            },
+                            { data: 'remark' },
+                            {
+                                render: function (data, type, row, meta) {
+                                    if (row.entry_time === null || row.entry_time === undefined || row.entry_time === '') {
+                                      return `-`;
+                                    } else {
+                                        return moment(String(row.entry_time)).format('YYYY-MM-DD');
+                                    }
+                                }
+                            }
+                        ]
+                    });
+
+                    $('#onSearchClick').click(function () {
+                        table.ajax.reload();
+                    });
+
+                    $('#onResetClick').click(function () {
+                        $('#searchForm').trigger("reset");
+                        table.ajax.reload();
+                    });
+                    
+                },0);
+            },
+            exportToExcel(){
+                var params = {frm_date: $('#frm_date').val(), to_date: $('#to_date').val(), to_user_id: $('#to_user_id').val(),
+                                    from_user_id: $('#from_user_id').val(),action:'export',responseType: 'blob' };
+                axios.post('wallet_transaction_report', params).then(resp => {
+                    if(resp.data.code === 200){
+                        //this.export_url = resp.data.data.excel_url;
+                        var mystring = resp.data.data.data;
+                        var myblob = new Blob([mystring], {
+                            type: 'text/plain'
+                        });
+
+                        var fileURL = window.URL.createObjectURL(new Blob([myblob]));
+                        var fileLink = document.createElement('a');
+
+                        fileLink.href = fileURL;
+                        fileLink.setAttribute('download', 'wallet_transaction_report.xls');
+                        document.body.appendChild(fileLink);
+
+                        fileLink.click();
+                    }else{    
+                        this.$toaster.error(resp.data.message)
+                    }    
+                });
+            }
+
+
+        }
+    }
+</script>
